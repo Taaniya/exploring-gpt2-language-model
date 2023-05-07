@@ -17,8 +17,8 @@ from transformers import DataCollatorForLanguageModeling
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Finetuning Decoder only Transformer with causal language modelling objective", add_help=True)
-    parser.add_argument("--model-name", type=str, default="bert-base-multilingual-cased",
+        description="Finetuning Decoder only Transformer model with causal language modelling objective", add_help=True)
+    parser.add_argument("--model-name", type=str, default="gpt2",
                         help="pre-trained model name or path")
     parser.add_argument("--seed", type=int, default=42, help="random seed value")
     parser.add_argument("--batch-size", type=int, required=True, help="batch size for training")
@@ -46,7 +46,7 @@ def main():
     weight_decay = args.weight_decay
     model_save_path = f"{model_dir}/{args.model_name}-{model_version}"
 
-    # load  training data
+    # load training data
     if os.path.isfile(dataset_path):
         datasets = load_dataset("text", data_files={"train": [dataset_path]})
         print("dataset loaded")
