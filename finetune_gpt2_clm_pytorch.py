@@ -75,7 +75,7 @@ def main():
 
     # postpone padding in preprocessing step to apply dynamic padding later
     # For text classification task with more columns in the dataset, remove all other columns in below step along with 'text' column
-    tokenized_datasets = dataset.map(lambda example: tokenizer(example['text']), batched=True, num_proc=4,
+    tokenized_datasets = datasets.map(lambda example: tokenizer(example['text']), batched=True, num_proc=4,
                                      remove_columns=["text"])
     # set EOS as pad token
     tokenizer.pad_token = tokenizer.eos_token
