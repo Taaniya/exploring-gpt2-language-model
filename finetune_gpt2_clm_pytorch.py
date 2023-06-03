@@ -62,7 +62,7 @@ def main():
         datasets = load_dataset("csv", data_files={"train": [dataset_path]}, download_mode='force_redownload')
         print(f"dataset loaded: {datasets} from path:{dataset_path}")
 
-        else:
+    else:
         print("invalid file path.")
 
     # Preprocess for text classification. Call function to concatenate input sentence and target labels. Print 1st 5 lines.
