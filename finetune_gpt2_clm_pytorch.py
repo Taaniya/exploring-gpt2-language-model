@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+This pipeline fine-tunes GPT2 family models on causal language modelling task.
+This script assumes a CSV input dataset, with training data present in 'text' column while optionally labels (if using for text classification) 
+included in the 'label' column. Modify the corresponding lines in the script to suit your dataset.
+"""
 
 import os
 import argparse
@@ -14,6 +19,12 @@ from transformers import AutoModelForCausalLM
 from transformers import Trainer, TrainingArguments
 from transformers import DataCollatorForLanguageModeling
 
+def __concat_input_target(row):
+    """
+    Concatenates input sentence / promt and target labels when using GPT2 for text classification task.
+    """
+    row['text'] = "###Text: " + row['text'] + " ###Label:" + row['label'].strip()
+    return row
 
 def main():
     parser = argparse.ArgumentParser(
@@ -44,23 +55,28 @@ def main():
     model_version = args.model_version_no
     model_checkpoint = args.model_name
     weight_decay = args.weight_decay
-    model_save_path = f"{model_dir}/{args.model_name}-{model_version}"
+    model_save_path = f"{model_dir}/{model_checkpoint}-{model_version}"
 
     # load training data
     if os.path.isfile(dataset_path):
-        datasets = load_dataset("text", data_files={"train": [dataset_path]})
-        print("dataset loaded")
+        datasets = load_dataset("csv", data_files={"train": [dataset_path]}, download_mode='force_redownload')
+        print(f"dataset loaded: {datasets} from path:{dataset_path}")
 
         else:
         print("invalid file path.")
 
+    # Preprocess for text classification. Call function to concatenate input sentence and target labels. Print 1st 5 lines.
+    # Uncomment below lines for text classification task
+    # preprocessed_dataset = datasets.map(__concat_input_target)
+    # print(f"preprocessed dataset: {preprocessed_dataset['train']['text'][:5]}")
+    
     # Load Tokenizer. Use fast implementation of tokenization
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, use_fast=True)
 
     # postpone padding in preprocessing step to apply dynamic padding later
+    # For text classification task with more columns in the dataset, remove all other columns in below step along with 'text' column
     tokenized_datasets = dataset.map(lambda example: tokenizer(example['text']), batched=True, num_proc=4,
                                      remove_columns=["text"])
-
     # set EOS as pad token
     tokenizer.pad_token = tokenizer.eos_token
 
