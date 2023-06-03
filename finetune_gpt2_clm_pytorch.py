@@ -19,7 +19,7 @@ from transformers import AutoModelForCausalLM
 from transformers import Trainer, TrainingArguments
 from transformers import DataCollatorForLanguageModeling
 
-def __concat_input_target(row):
+def _concat_input_target(row):
     """
     Concatenates input sentence / promt and target labels when using GPT2 for text classification task.
     """
@@ -67,7 +67,7 @@ def main():
 
     # Preprocess for text classification. Call function to concatenate input sentence and target labels. Print 1st 5 lines.
     # Uncomment below lines for text classification task
-    # preprocessed_dataset = datasets.map(__concat_input_target)
+    # preprocessed_dataset = datasets.map(_concat_input_target)
     # print(f"preprocessed dataset: {preprocessed_dataset['train']['text'][:5]}")
     
     # Load Tokenizer. Use fast implementation of tokenization
